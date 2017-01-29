@@ -47,8 +47,8 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="optimeyes.html">Get Started</a></li>
+            <li><a href="index.html">Home</a></li>
+            <li class="active"><a href="optimeyes.html">Get Started</a></li>
             <li><a href="about.html">About</a></li>
           </ul>
         </div><!--/.nav-collapse -->
@@ -59,12 +59,100 @@
 
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
-        <h1>OptimEyes your eye health</h1>
-        <p>Many people who use the computer daily have to deal with Computer Vision Syndrome. To help give your eyes a break, we suggest following the 20-20-20 rule. Every 20 minutes, take a break to look at something 20 feet away for 20 seconds. We'll remind you every 20 minutes to take a break.</p>
-        <p>We'll also warn you if you're too close to the screen. This causes unneeded eyestrain and poor posture. This is reminders are all automatic and runs in the background, so you can focus on your work.</p>
-        <p>
-          <a class="btn btn-lg btn-primary" role="button">Get started</a>
-        </p>
+        <h1>OptimEyes: now</h1>
+        <p>You're on your way to better eye health - leave this page open in the background and we'll take care of the rest.</p>
+        <h1 id="finTime"><time>00:00</time></h1>
+        <button class="btn btn-lg btn-success" role="button" id="clear">restart</button>
+
+        <script type="text/javascript">
+        var finalTime = document.getElementById('finTime'),
+
+        //start = document.getElementById('start'),
+
+        //stop = document.getElementById('stop'),
+
+        clear = document.getElementById('clear'),
+
+        seconds = 0, minutes = 0,
+
+        t;
+
+
+        function add() {
+
+        seconds++;
+
+        if (seconds >= 60) {
+
+        seconds = 0;
+
+        minutes++;
+
+        if (minutes >= 20) {
+          notifyMe("Your eyes need a break.")
+          minutes = 0;
+
+          seconds = 0;
+               }
+
+        }
+
+
+        finalTime.textContent = (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") +
+        ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+          timer();
+        }
+        function timer() {
+
+        t = setTimeout(add, 1000);
+        }
+        timer();
+
+
+        /* Start button */
+        //start.onclick = timer;
+
+        /* Stop button */
+
+        /*stop.onclick = function() {
+
+        clearTimeout(t);
+        }*/
+
+        /* Clear button */
+
+        clear.onclick = function() {
+           finalTime.textContent = "00:00";
+           seconds = 0; minutes = 0;
+        }
+
+        function notifyMe(message) {
+           // Let's check if the browser supports notifications
+           if (!("Notification" in window)) {
+             alert("This browser does not support system notifications");
+           }
+
+           // Let's check whether notification permissions have already been granted
+           else if (Notification.permission === "granted") {
+             // If it's okay let's create a notification
+             var notification = new Notification(message);
+           }
+
+           // Otherwise, we need to ask the user for permission
+           else if (Notification.permission !== 'denied') {
+             Notification.requestPermission(function (permission) {
+               // If the user accepts, let's create a notification
+               if (permission === "granted") {
+                 var notification = new Notification(message);
+               }
+             });
+           }
+
+           // Finally, if the user has denied notifications and you
+           // want to be respectful there is no need to bother them any more.
+          }
+        </script>
       </div>
 
     </div> <!-- /container -->
