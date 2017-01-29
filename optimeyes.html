@@ -23,12 +23,23 @@
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="build/tracking-min.js"></script>
+    <script src="build/data/face-min.js"></script>
+    <script src="../node_modules/dat.gui/build/dat.gui.min.js"></script>
+    <script src="assets/stats.min.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style>
+    video, canvas {
+      margin-left: 0px;
+      margin-top: 0px;
+      position: absolute;
+    }
+    </style>
   </head>
 
   <body>
@@ -63,6 +74,13 @@
         <p>You're on your way to better eye health - leave this page open in the background and we'll take care of the rest.</p>
         <h1 id="finTime"><time>00:00</time></h1>
         <button class="btn btn-lg btn-success" role="button" id="clear">restart</button>
+
+        <div class="demo-frame">
+          <div class="demo-container">
+            <video id="video" width="480" height="360" preload autoplay loop muted></video>
+            <canvas id="canvas" width="480" height="360"></canvas>
+          </div>
+        </div>
 
         <script type="text/javascript">
         var finalTime = document.getElementById('finTime'),
@@ -152,6 +170,46 @@
            // Finally, if the user has denied notifications and you
            // want to be respectful there is no need to bother them any more.
           }
+
+          window.onload = function() {
+            var video = document.getElementById('video');
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+
+            var tracker = new tracking.ObjectTracker('face');
+            tracker.setInitialScale(1.56);
+            tracker.setStepSize(2);
+            tracker.setEdgesDensity(0.1);
+
+            tracking.track('#video', tracker, { camera: true });
+
+            tracker.on('track', function(event) {
+              context.clearRect(0, 0, canvas.width, canvas.height);
+
+              event.data.forEach(function(rect) {
+                context.strokeStyle = '#e80d15';
+                context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+                context.font = '18px Helvetica';
+                context.fillStyle = "#000000";
+                context.fillText('x: ' + rect.width + 'px', rect.x + rect.width + 5, rect.y + 11);
+                context.fillText('y: ' + rect.width + 'px', rect.x + rect.width + 5, rect.y + 22);
+                var width = rect.width;
+                var distance = 30 - (width-100)/10;
+
+                if (distance < 14 && seconds % 5 == 0) {
+                  notifyMe("You are too far close and straining your eyes.")
+                } else if (distance > 30 && seconds % 5 == 0) {
+                  notifyMe("You are too far away and straining your eyes.")
+                }
+
+              });
+            });
+
+            var gui = new dat.GUI();
+            gui.add(tracker, 'edgesDensity', 0.1, 0.5).step(0.01);
+            gui.add(tracker, 'initialScale', 1.0, 10.0).step(0.1);
+            gui.add(tracker, 'stepSize', 1, 5).step(0.1);
+          };
         </script>
       </div>
 
