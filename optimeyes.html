@@ -35,8 +35,8 @@
     <![endif]-->
     <style>
     video, canvas {
-      margin-left: 0px;
-      margin-top: 0px;
+      margin-left: auto;
+      margin-top: auto;
       position: absolute;
     }
     </style>
@@ -70,20 +70,36 @@
 
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
-        <h1>OptimEyes: now</h1>
+        <h2>OptimEyes: now</h2>
         <p>You're on your way to better eye health - leave this page open in the background and we'll take care of the rest.</p>
-        <h1 id="finTime"><time>00:00</time></h1>
+        <h2 id="finTime">00:00</h2>
         <button class="btn btn-lg btn-success" role="button" id="clear">restart</button>
-
+        <p id="feed">Loading...</p>
         <div class="demo-frame">
           <div class="demo-container">
             <video id="video" width="480" height="360" preload autoplay loop muted></video>
             <canvas id="canvas" width="480" height="360"></canvas>
+          <ul style="float:right;font-size: 1.1em;margin-right:-30px">
+            <h4>Tips:</h4>
+          <li>Prevent glare on your screen to minimize eye itchiness</li>
+          <li>Position the top of your screen with the bottom of your chin to reduce strain</li>
+          <li>Blink often to prevent your eyes drying out</li>
+          <li>Adjust screen brightness and contrast to the most comfortable setting</li>
+          <li>Closing your eyes for 20 seconds can rehydrate your eyes</li>
+          <li>Keeping a clean screen makes eases strain on eyes</li>
+          <li>Humidifiers and eye drops can counteract dry eyes</li>
+          <li>Be sure to wear your glasses when using your electronic device</li>
+          <li>Take a break and stare at an object far away for a few seconds</li>
+          <li>Proper posture improves</li>
+          </ul>
+          <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
           </div>
         </div>
 
+
         <script type="text/javascript">
         var finalTime = document.getElementById('finTime'),
+        feed = document.getElementById('feed'),
 
         //start = document.getElementById('start'),
 
@@ -106,7 +122,7 @@
 
         minutes++;
 
-        if (minutes >= 20) {
+        if (minutes >= 1) {
           notifyMe("Your eyes need a break.")
           minutes = 0;
 
@@ -196,11 +212,15 @@
                 var width = rect.width;
                 var distance = 30 - (width-100)/10;
 
-                if (distance < 14 && seconds % 5 == 0) {
-                  notifyMe("You are too far close and straining your eyes.")
-                } else if (distance > 30 && seconds % 5 == 0) {
-                  notifyMe("You are too far away and straining your eyes.")
-                }
+                if (seconds % 3 == 0) {
+                  if (distance < 14) {
+                    feed.textContent = "You are too close and straining your eyes.";
+                  } else if (distance > 30) {
+                    feed.textContent ="You are too far away and straining your eyes.";
+                  } else {
+                    feed.textContent ="Perfect! Keep that position for better eye health.";
+                  }
+              }
 
               });
             });
@@ -211,6 +231,8 @@
             gui.add(tracker, 'stepSize', 1, 5).step(0.1);
           };
         </script>
+
+
       </div>
 
     </div> <!-- /container -->
